@@ -1,7 +1,30 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <router-view/>
+    <section class="section header">
+      <div class="container">
+        <div class="columns is-multiline">
+          <div class="column is-12">
+            <img src="/static/logo.png" class="logo">
+          </div>
+          <div class="column is-12">
+            <h1 class="title">Documenters Assignment Application</h1>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section main">
+      <div class="container">
+        <div class="columns">
+          <div class="column">
+            <div class="content">
+              <router-view/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </div>
 </template>
 
@@ -11,13 +34,14 @@ export default {
 }
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style lang="scss" scoped>
+img.logo {
+  width: 10em;
+}
+.header {
+  padding-bottom: 0;
+}
+.main {
+  padding-top: 1em;
 }
 </style>

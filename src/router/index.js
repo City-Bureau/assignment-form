@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/AssignmentForm'
+import AssignmentForm from '@/components/AssignmentForm'
 
 Vue.use(Router)
 

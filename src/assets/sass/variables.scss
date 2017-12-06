@@ -1,0 +1,19 @@
+$blue: #6598b8;
+
+$red: #e92330;
+$primary: $red;
+$yellow: #f6ac4c;
+
+$black: #221e1f;
+
+/*$link:*/
+/*$info:*/
+
+/*$success:*/
+/*$warning:*/
+
+@import '~bulma/bulma';
+
+.content a:hover {
+  color: rgba(101,152,184,.7);
+}
