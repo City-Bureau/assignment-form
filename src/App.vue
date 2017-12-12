@@ -4,7 +4,9 @@
       <div class="container">
         <div class="columns is-multiline">
           <div class="column is-12">
-            <img src="/static/logo.png" class="logo">
+            <a href="http://citybureau.org">
+              <img src="/static/logo.png" class="logo">
+            </a>
           </div>
           <div class="column is-12">
             <h1 class="title">Documenters Assignment Application</h1>
