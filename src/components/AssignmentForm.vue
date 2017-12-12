@@ -16,17 +16,26 @@
   margin-bottom: .5em;
   font-weight: bold;
 }
+.content .event .subtitle {
+  margin-bottom: .5rem;
+}
 
-.description, .location {
+.description, .location, .community-area {
   font-size: .9em;
 }
 
-.event {
-  margin-bottom: 2em;
-  color: rgba($black, .5);
+.event p.community-area {
+  margin-bottom: 0;
+  font-weight: bold;
 }
 
-.event:hover {
+.event {
+  padding: 1.5em 1em;
+  margin-bottom: 2em;
+  color: rgba($black, .6);
+}
+
+.event.selected {
   cursor: pointer;
   color: $black;
   .title {
@@ -37,12 +46,7 @@
   }
 }
 
-.event label {
-  display: block;
-  padding: 1.5em 1em;
-}
-
-.event label:hover {
+.event:hover {
   cursor: pointer;
 }
 
@@ -76,16 +80,22 @@ button.submit {
     </div>
     <div v-else>
       <p>Please use this form to claim assignments you want to document. Selected Documenters will be notified via email with instructions on how to complete the assignment and receive payment.</p>
-      <div class="event" v-for="e in events">
-        <label>
+      <div v-for="e in events" :key="e.id" class="event" v-bind:class="{ selected: e.selected }" v-on:click="toggleSelection(e)">
           <div class="columns">
             <div class="column is-1 checkbox">
-              <input type="checkbox" v-model="e.selected">
+              <input type="checkbox" v-model="e.selected" :id="e.id">
             </div>
 
             <div class="column is-11">
-              <p class="title is-4">{{ e.fields.name }}</p>
-              <p class="subtitle is-6">{{ e.fields.agency_name }}</p>
+              <label :for="e.id">
+                <p class="title is-4">{{ e.fields.name }}</p>
+              </label>
+              <p class="subtitle is-6">
+                {{ e.fields.agency_name }}
+              </p>
+              <p class="assignment-type">
+                <span class="tag is-light is-rounded" v-for="t in e.fields.assignment" :key="t">{{ t }}</span>
+              </p>
 
               <div class="columns">
                 <div class="column is-half">
@@ -93,15 +103,16 @@ button.submit {
                     {{ format(e.fields.date, "dddd, MMMM D, YYYY")}}<br>
                     {{ format(e.fields.date, "h:mma") }}
                   </p>
-                  <p class="location">{{ e.fields["location_name"] }}</p>
+                  <p class="description">{{ e.fields["description"] }}</p>
+                  <p class="community-area">Community Area</p>
+                  <p class="location"><a v-on:click.stop :href="mapURL(e.fields['location_name'])" target="_blank">{{ e.fields["location_name"] }}</a></p>
                 </div>
                 <div class="column is-half">
-                  <p class="description">{{ e.fields["description"] }}</p>
+                  
                 </div>
               </div>
             </div>
           </div>
-        </label>
       </div>
       <form>
       <div class="summary">
@@ -142,7 +153,7 @@ button.submit {
         </div>
 
         <div v-if="submissionAttempted" class="validation">
-          <p v-for="m in validationMessages()">{{m}}</p>
+          <p v-for="m in validationMessages()" :key="m">{{m}}</p>
         </div>
 
         <button class="button is-warning is-medium submit" v-on:click.prevent="submit">Request Assignments</button>
@@ -180,6 +191,13 @@ export default {
   },
   methods: {
     format,
+    toggleSelection(event) {
+      event.selected = !event.selected;
+    },
+    mapURL(address) {
+      const encodedAddress = encodeURIComponent(address);
+      return `https://www.google.com/maps/search/${encodedAddress}`;
+    },
     selectedAssignments() {
       return this.events.filter( (e) => e.selected );
     },
@@ -220,12 +238,14 @@ export default {
 
     fetchData() {
       this.loading = true;
+      const domain = process.env.NODE_ENV === 'production' ? 'http://assignment-api.cb.autonomousmachine.com' : 'http://localhost:5000';
 
-      fetch('http://assignment-api.cb.autonomousmachine.com/api/events')
+      fetch(`${domain}/api/events`)
         .then((response) => response.json())
         .then((data) => {
           data.forEach( (d) => {
             d.fields.date = parse(d.fields.start_time);
+            d.selected = false;
           });
           this.events = data;
           this.loading = false;
