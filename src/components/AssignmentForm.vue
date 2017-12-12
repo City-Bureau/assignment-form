@@ -115,6 +115,13 @@ button.submit {
         </div>
 
         <div class="field">
+          <label class="label">Email</label>
+          <div class="control">
+            <input class="input" type="text" v-model="email" placeholder="you@email.com">
+          </div>
+        </div>
+
+        <div class="field">
           <div class="control">
             <label class="checkbox">
               <input type="checkbox" v-model="agreedToTerms">
@@ -164,7 +171,8 @@ export default {
       events: [],
       agreedToTerms: false,
       agreedToRate: false,
-      name: ""
+      name: "",
+      email: "",
     }
   },
   created() {
@@ -191,14 +199,21 @@ export default {
       if (this.selectedAssignments().length === 0) {
         errors.push("Please select at least one assignment above.");
       }
+      if (this.name.trim().length === 0) {
+        errors.push("Please enter your name.");
+      }
+      const emailLength = this.email.trim().length;
+      if (emailLength === 0) {
+        errors.push("Please enter your email.");
+      }
+      if (emailLength > 0 && !/.+@.+\..+/.test(this.email)) {
+        errors.push("Please enter a valid email.");
+      }
       if (!this.agreedToTerms) {
-        errors.push("Please agree to terms and conditions as described above.");
+        errors.push("Please agree to terms and conditions.");
       }
       if (!this.agreedToRate) {
-        errors.push("Please agree to the rate as described above.");
-      }
-      if (this.name.length === 0) {
-        errors.push("Please enter your name above.");
+        errors.push("Please agree to the rate.");
       }
       return errors;
     },
