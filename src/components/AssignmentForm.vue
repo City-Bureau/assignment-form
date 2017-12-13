@@ -3,19 +3,6 @@
 
 @import "../assets/sass/variables.scss";
 
-.column.checkbox {
-  text-align: right;
-}
-
-.event input {
-  transform:scale(2, 2);
-  margin-top: 1.3em;
-}
-
-.form .date {
-  margin-bottom: .5em;
-  font-weight: bold;
-}
 .content .event .subtitle {
   margin-bottom: .5rem;
 }
@@ -24,53 +11,108 @@
   font-size: .9em;
 }
 
-.event p.community-area {
-  margin-bottom: 0;
-  font-weight: bold;
-}
-
 .event {
-  padding: 1.5em 1em;
-  margin-bottom: 2em;
+  margin: 2em 0 3em;
   color: rgba($black, .6);
-}
 
-.event.selected {
-  cursor: pointer;
-  color: $black;
-  .title {
-    color: red;
-  }
   .subtitle {
-    color: $yellow;
+    color: inherit;
   }
+
+  .meta {
+    margin-left: 55px;
+  }
+
+  p.community-area {
+    margin-bottom: 0;
+    font-weight: bold;
+  }
+
+  &:hover {
+    cursor: pointer;
+    .title {
+      color: darken( red, 20%);
+    }
+  }
+
+  &.selected {
+    color: $black;
+    .title {
+      color: red;
+    }
+  }
+
 }
 
-.event:hover {
-  cursor: pointer;
+.event .b-checkbox {
+  line-height: 1.8;
+  overflow: hidden;
+
+  label .hidden {
+    display: none;
+  }
+  label::before {
+    height: 44px;
+    width: 44px;
+  }
+  label::after {
+    width: 44px;
+    height: 44px;
+    left: 5px;
+    top: 5px;
+    font-size: 36px;
+  }
+  .title, .subtitle {
+    margin-left: 55px;
+  }
+  .checkbox-container {
+    float: left;
+  }
 }
 
 .summary {
   padding: 2em;
   border: solid 4px $yellow;
-  input[type=text] {
-    width: 50%;
+
+  .validation {
+    margin-top: 2em;
+    p {
+      color: red;
+      margin: 0;
+    }
   }
 }
 
-.summary .validation p {
-  color: red;
-  margin: 0;
-}
+.summary .b-checkbox {
+  margin: 1.5em 0;
+  line-height: 1.8;
 
-.validation {
-  margin-top: 2em;
+  label {
+    padding-left: 15px;
+    font-weight: bold;
+  }
+  label::before {
+    height: 24px;
+    width: 24px;
+  }
+  label::after {
+    width: 22px;
+    height: 22px;
+    left: 4px;
+    top: 4px;
+    font-size: 17px;
+    line-height: 1;
+  }
 }
 
 button.submit {
   margin-top: 1em;
 }
 
+.form .date {
+  margin-bottom: .5em;
+  font-weight: bold;
+}
 </style>
 
 <template>
@@ -80,40 +122,39 @@ button.submit {
     </div>
     <div v-else>
       <p>Please use this form to claim assignments you want to document. Selected Documenters will be notified via email with instructions on how to complete the assignment and receive payment.</p>
-      <div v-for="e in events" :key="e.id" class="event" v-bind:class="{ selected: e.selected }" v-on:click="toggleSelection(e)">
-          <div class="columns">
-            <div class="column is-1 checkbox">
-              <input type="checkbox" v-model="e.selected" :id="e.id">
-            </div>
+      <div v-for="e in events" :key="e.id" class="event" v-bind:class="{ selected: e.selected }" @click="toggleSelection(e)">
+        <div class="b-checkbox">
+          <div class="checkbox-container">
+            <input type="checkbox" v-model="e.selected" :id="e.id" class="styled" @click.prevent.stop >
+            <label :for="e.id" @click.prevent ><span class="hidden">{{ e.fields.name }}, {{ e.fields.agency_name }}</span></label>
+          </div>
+          <p class="title is-4">{{ e.fields.name }}</p>
+          <p class="subtitle is-6">
+            {{ e.fields.agency_name }}
+          </p>
+        </div>
 
-            <div class="column is-11">
-              <label :for="e.id">
-                <p class="title is-4">{{ e.fields.name }}</p>
-              </label>
-              <p class="subtitle is-6">
-                {{ e.fields.agency_name }}
-              </p>
+        <div class="columns">
+          <div class="column is-half">
+            <div class="meta">
               <p class="assignment-type">
-                <span class="tag is-light is-rounded" v-for="t in e.fields.assignment" :key="t">{{ t }}</span>
+                <span v-for="t in e.fields.assignment" :key="t" class="tag is-rounded" :class="e.selected ? 'is-warning' : 'is-light'">{{ t }}</span>
               </p>
-
-              <div class="columns">
-                <div class="column is-half">
-                  <p class="date">
-                    {{ format(e.fields.date, "dddd, MMMM D, YYYY")}}<br>
-                    {{ format(e.fields.date, "h:mma") }}
-                  </p>
-                  <p class="description">{{ e.fields["description"] }}</p>
-                  <p class="community-area">Community Area</p>
-                  <p class="location"><a v-on:click.stop :href="mapURL(e.fields['location_name'])" target="_blank">{{ e.fields["location_name"] }}</a></p>
-                </div>
-                <div class="column is-half">
-                  
-                </div>
-              </div>
+              <p class="date">
+                {{ format(e.fields.date, "dddd, MMMM D, YYYY")}}<br>
+                {{ format(e.fields.date, "h:mma") }}
+              </p>
+              <p class="description">{{ e.fields["description"] }}</p>
+              <p class="community-area">Community Area</p>
+              <p class="location"><a v-on:click.stop :href="mapURL(e.fields['location_name'])" target="_blank">{{ e.fields["location_name"] }}</a></p>
             </div>
           </div>
+        </div>
+        <div class="column">
+        </div>
+
       </div>
+
       <form>
       <div class="summary">
         <p class="subtitle is-5">{{ selectedAssignmentsMessage() }}</p>
@@ -134,10 +175,12 @@ button.submit {
 
         <div class="field">
           <div class="control">
-            <label class="checkbox">
-              <input type="checkbox" v-model="agreedToTerms">
-              I agree to the <a href="" _target="blank">terms and conditions</a> of this Documenters assignment.
-            </label>
+            <div class="b-checkbox">
+              <input type="checkbox" v-model="agreedToTerms" id="agreedToTerms" class="styled">
+              <label for="agreedToTerms">
+                I agree to the <a href="" _target="blank">terms and conditions</a> of this Documenters assignment.
+              </label>
+            </div>
           </div>
         </div>
 
@@ -145,10 +188,12 @@ button.submit {
 
         <div class="field">
           <div class="control">
-            <label class="checkbox">
-              <input type="checkbox" v-model="agreedToRate">
-              I agree to City Bureau's $15/hour pay rate for Documenters assignments.
-            </label>
+            <div class="b-checkbox">
+              <input type="checkbox" v-model="agreedToRate" id="agreedToRate" class="styled">
+              <label for="agreedToRate">
+                I agree to City Bureau's $15/hour pay rate for Documenters assignments.
+              </label>
+            </div>
           </div>
         </div>
 
