@@ -95,7 +95,7 @@
             {{ format(event.fields.date, "h:mma") }}
           </p>
           <p class="description">{{ event.fields["description"] }}</p>
-          <p class="community-area">Community Area</p>
+          <p class="community-area">{{ event.fields["community_area"] }}</p>
           <p class="location"><a v-on:click.stop :href="mapURL(event.fields['location_name'])" target="_blank">{{ event.fields["location_name"] }}</a></p>
         </div>
       </div>

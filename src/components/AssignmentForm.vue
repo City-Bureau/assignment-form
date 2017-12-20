@@ -46,6 +46,10 @@ button.submit {
   margin-bottom: .5em;
   font-weight: bold;
 }
+
+.error {
+  margin-top: 1em;
+}
 </style>
 
 <template>
@@ -80,8 +84,8 @@ button.submit {
         <div class="field">
           <div class="control">
             <div class="b-checkbox">
-              <input type="checkbox" v-model="agreedToTerms" id="agreedToTerms" class="styled">
-              <label for="agreedToTerms">
+              <input type="checkbox" v-model="agreeToTerms" id="agreeToTerms" class="styled">
+              <label for="agreeToTerms">
                 I agree to the <a href="" _target="blank">terms and conditions</a> of this Documenters assignment.
               </label>
             </div>
@@ -93,8 +97,8 @@ button.submit {
         <div class="field">
           <div class="control">
             <div class="b-checkbox">
-              <input type="checkbox" v-model="agreedToRate" id="agreedToRate" class="styled">
-              <label for="agreedToRate">
+              <input type="checkbox" v-model="agreeToRate" id="agreeToRate" class="styled">
+              <label for="agreeToRate">
                 I agree to City Bureau's $15/hour pay rate for Documenters assignments.
               </label>
             </div>
@@ -105,7 +109,9 @@ button.submit {
           <p v-for="m in validationMessages()" :key="m">{{m}}</p>
         </div>
 
-        <button class="button is-warning is-medium submit" v-on:click.prevent="submit">Request Assignments</button>
+        <button class="button is-warning is-medium submit" v-on:click.prevent="submit" :disabled="submitting">
+          {{ submitting ? "Please wait..." : "Request Assignments" }}
+        </button>
       </div>
       </form>
 
@@ -129,11 +135,12 @@ export default {
   data () {
     return {
       loading: false,
+      submitting: false,
       error: null,
       submissionAttempted: false,
       events: [],
-      agreedToTerms: false,
-      agreedToRate: false,
+      agreeToTerms: false,
+      agreeToRate: false,
       name: "",
       email: "",
     }
@@ -179,20 +186,30 @@ export default {
       if (emailLength > 0 && !/.+@.+\..+/.test(this.email)) {
         errors.push("Please enter a valid email.");
       }
-      if (!this.agreedToTerms) {
+      if (!this.agreeToTerms) {
         errors.push("Please agree to terms and conditions.");
       }
-      if (!this.agreedToRate) {
+      if (!this.agreeToRate) {
         errors.push("Please agree to the rate.");
       }
       return errors;
     },
 
+    domain() {
+      const domain = process.env.NODE_ENV === 'production' ? 'http://assignment-api.cb.autonomousmachine.com' : 'http://localhost:5000';
+      return domain;
+    },
+
     fetchData() {
       this.loading = true;
-      const domain = process.env.NODE_ENV === 'production' ? 'http://assignment-api.cb.autonomousmachine.com' : 'http://localhost:5000';
 
-      fetch(`${domain}/api/events`)
+      const options = {
+        headers: {
+          "Accept": "application/json"
+        }
+      };
+
+      fetch(`${this.domain()}/api/events`, options)
         .then((response) => response.json())
         .then((data) => {
           data.forEach( (d) => {
@@ -211,7 +228,33 @@ export default {
       if (errors.length > 0) {
         return;
       }
-      console.debug('saving!');
+
+      this.submitting = true;
+
+      const params = {
+        agree_to_terms: this.agreeToTerms,
+        agree_to_rate: this.agreeToRate,
+        applied_name: this.name,
+        email: this.email,
+        event: this.selectedAssignments().map(event => event.id),
+      };
+
+      const options = {
+        method: "POST",
+        body: JSON.stringify(params),
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        }
+      };
+
+      fetch(`${this.domain()}/api/applications`, options)
+        .then((response) => response.json())
+        .then((data) => {
+          this.submitting = false;
+          this.$router.push({name: 'success'});
+        })
+        .catch( (e) => this.error = e.toString());
     }
   }
 }
