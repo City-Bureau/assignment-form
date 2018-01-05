@@ -9,6 +9,10 @@
 
 .description, .location, .community-area {
   font-size: .9em;
+  .tag {
+    padding-left: 0;
+    color: rgba($black, .6);
+  }
 }
 
 .event {
@@ -25,7 +29,6 @@
 
   p.community-area {
     margin-bottom: 0;
-    font-weight: bold;
   }
 
   &:hover {
@@ -87,7 +90,7 @@
     <div class="columns">
       <div class="column is-half">
         <div class="meta">
-          <p class="assignment-type">
+          <p class="assignment-type tags">
             <span v-for="t in event.fields.assignment" :key="t" class="tag is-rounded" :class="event.selected ? 'is-warning' : 'is-light'">{{ t }}</span>
           </p>
           <p class="date">
@@ -95,8 +98,15 @@
             {{ format(event.fields.date, "h:mma") }}
           </p>
           <p class="description">{{ event.fields["description"] }}</p>
-          <p class="community-area">{{ event.fields["community_area"] }}</p>
-          <p class="location"><a v-on:click.stop :href="mapURL(event.fields['location_name'])" target="_blank">{{ event.fields["location_name"] }}</a></p>
+          <p class="community-area">
+            <span class="tag is-white">Community Area</span>
+            {{ event.fields["community_area"] || "-"}}
+          </p>
+          <p class="location">
+            <span class="tag is-white">Location</span>
+            <a v-if="event.fields['location_name']" v-on:click.stop :href="mapURL(event.fields['location_name'])" target="_blank">{{ event.fields["location_name"] }}</a>
+            <span v-else>-</span>
+          </p>
         </div>
       </div>
     </div>

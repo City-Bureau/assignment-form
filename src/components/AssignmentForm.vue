@@ -92,7 +92,9 @@ button.submit {
           </div>
         </div>
 
-        <p>You will be paid through our automated system when the agreed upon terms have been met, i.e. if you are assigned to fill out a meeting template and live-tweet a meeting, your payment will be processed when the template is turned in and the live-tweets confirmed.</p>
+        <p>You will be paid through our automated system when the agreed upon terms have been met, i.e.
+           if you are assigned to fill out a meeting template and live-tweet a meeting, your payment
+           will be processed when the template is turned in and the live-tweets confirmed.</p>
 
         <div class="field">
           <div class="control">
