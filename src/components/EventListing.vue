@@ -57,6 +57,7 @@
   label::before {
     height: 44px;
     width: 44px;
+    background-color: #f5f5f5;
   }
   label::after {
     width: 44px;
@@ -81,9 +82,9 @@
         <input type="checkbox" v-model="event.selected" :id="event.id" class="styled" @click.prevent.stop >
         <label :for="event.id" @click.prevent ><span class="hidden">{{ event.fields.name }}, {{ event.fields.agency_name }}</span></label>
       </div>
-      <p class="title is-4">{{ event.fields.name }}</p>
+      <p class="title is-4">{{ event.fields.agency_name }}</p>
       <p class="subtitle is-6">
-        {{ event.fields.agency_name }}
+        {{ event.fields.name }}
       </p>
     </div>
 
@@ -110,7 +111,7 @@
           </p>
           <p class="location">
             <span class="tag is-white">Location</span>
-            <a v-if="event.fields['location_name']" v-on:click.stop :href="mapURL(event.fields['location_name'])" target="_blank">{{ event.fields["location_name"] }}</a>
+            <a v-if="event.fields['location_address']" v-on:click.stop :href="mapURL(event.fields['location_address'])" target="_blank">{{ event.fields["location_address"] }}</a>
             <span v-else>-</span>
           </p>
         </div>
