@@ -49,6 +49,8 @@ button.submit {
 
 .error {
   margin-top: 1em;
+  font-size: 1.2em;
+  color: red;
 }
 </style>
 
@@ -178,6 +180,10 @@ export default {
       if (this.selectedAssignments().length === 0) {
         errors.push("Please select at least one assignment above.");
       }
+      let unselectedAssignmentTypes = this.selectedAssignments().some( a => a.selectedAssignmentType === "none" );
+      if (unselectedAssignmentTypes) {
+        errors.push("Please select an assignment type for each selected meeting.");
+      }
       if (this.name.trim().length === 0) {
         errors.push("Please enter your name.");
       }
@@ -217,6 +223,7 @@ export default {
           data.forEach( (d) => {
             d.fields.date = parse(d.fields.start_time);
             d.selected = false;
+            d.selectedAssignmentType = "none";
           });
           this.events = data;
           this.loading = false;
@@ -238,7 +245,9 @@ export default {
         agree_to_rate: this.agreeToRate,
         applied_name: this.name,
         email: this.email,
-        event: this.selectedAssignments().map(event => event.id),
+        event: this.selectedAssignments().map( (event) => {
+          return {id: event.id, assignment_type: event.selectedAssignmentType}
+        }),
       };
 
       const options = {
@@ -251,7 +260,12 @@ export default {
       };
 
       fetch(`${this.domain()}/api/applications`, options)
-        .then((response) => response.json())
+        .then((response) => {
+          if(response.ok) {
+            return response.json();
+          }
+          throw new Error("Application could not be submitted! Please send us an email and report this problem.");
+        })
         .then((data) => {
           this.submitting = false;
           this.$router.push({name: 'success'});

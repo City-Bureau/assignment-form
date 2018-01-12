@@ -90,8 +90,14 @@
     <div class="columns">
       <div class="column is-half">
         <div class="meta">
-          <p class="assignment-type tags">
-            <span v-for="t in event.fields.assignment" :key="t" class="tag is-rounded" :class="event.selected ? 'is-warning' : 'is-light'">{{ t }}</span>
+          <p v-if="event.selected" class="assignment-type-select">
+            <select v-if="event.selected" v-model="event.selectedAssignmentType" @click.stop>
+              <option value="none">Please select an assignment type...</option>
+              <option v-for="t in event.fields.assignment" :value="t">{{ t }}</option>
+            </select>
+          </p>
+          <p v-else class="assignment-type tags">
+            <span v-for="t in event.fields.assignment" :key="t" class="tag is-rounded is-light">{{ t }}</span>
           </p>
           <p class="date">
             {{ format(event.fields.date, "dddd, MMMM D, YYYY")}}<br>
