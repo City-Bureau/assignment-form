@@ -4,7 +4,6 @@
 @import "../assets/sass/variables.scss";
 
 .summary {
-  padding: 2em;
   border: solid 4px $yellow;
 
   .validation {
@@ -13,6 +12,24 @@
       color: red;
       margin: 0;
     }
+  }
+
+  .box-header {
+    color: white;
+    font-weight: bold;
+
+    .instructions {
+      display: none;
+    }
+
+  }
+
+  .floating .box-header .instructions {
+    display: inline;
+  }
+
+  .summary-content {
+    padding: 2em;
   }
 }
 
@@ -52,6 +69,18 @@ button.submit {
   font-size: 1.2em;
   color: red;
 }
+
+.box-header {
+  padding: .7em 1em;
+  background: $yellow;
+  line-height: 1.3em;
+  border-bottom: solid 4px $yellow;
+}
+
+.floating .box-header {
+  border-bottom: none;
+}
+
 </style>
 
 <template>
@@ -66,57 +95,67 @@ button.submit {
       </event-listing>
 
       <form>
-      <div class="summary">
-        <p class="subtitle is-5">{{ selectedAssignmentsMessage() }}</p>
+        <div class="summary">
+          <floating-footer :floating="selectedAssignments().length > 0">
+            <p class="box-header is-5">
+              {{ selectedAssignmentsMessage() }}
+              <span class="instructions">
+                Please scroll down to complete your submission.
+              </span>
+            </p>
+          </floating-footer>
 
-        <div class="field">
-          <label class="label">Name</label>
-          <div class="control">
-            <input class="input" type="text" v-model="name" placeholder="Firstname Lastname">
-          </div>
-        </div>
+          <div class="summary-content">
 
-        <div class="field">
-          <label class="label">Email</label>
-          <div class="control">
-            <input class="input" type="text" v-model="email" placeholder="you@email.com">
-          </div>
-        </div>
-
-        <div class="field">
-          <div class="control">
-            <div class="b-checkbox">
-              <input type="checkbox" v-model="agreeToTerms" id="agreeToTerms" class="styled">
-              <label for="agreeToTerms">
-                I agree to the <a href="" _target="blank">terms and conditions</a> of this Documenters assignment.
-              </label>
+            <div class="field">
+              <label class="label">Name</label>
+              <div class="control">
+                <input class="input" type="text" v-model="name" placeholder="Firstname Lastname">
+              </div>
             </div>
-          </div>
-        </div>
 
-        <p>You will be paid through our automated system when the agreed upon terms have been met, i.e.
-           if you are assigned to fill out a meeting template and live-tweet a meeting, your payment
-           will be processed when the template is turned in and the live-tweets confirmed.</p>
-
-        <div class="field">
-          <div class="control">
-            <div class="b-checkbox">
-              <input type="checkbox" v-model="agreeToRate" id="agreeToRate" class="styled">
-              <label for="agreeToRate">
-                I agree to City Bureau's $15/hour pay rate for Documenters assignments.
-              </label>
+            <div class="field">
+              <label class="label">Email</label>
+              <div class="control">
+                <input class="input" type="text" v-model="email" placeholder="you@email.com">
+              </div>
             </div>
+
+            <div class="field">
+              <div class="control">
+                <div class="b-checkbox">
+                  <input type="checkbox" v-model="agreeToTerms" id="agreeToTerms" class="styled">
+                  <label for="agreeToTerms">
+                    I agree to the <a href="" _target="blank">terms and conditions</a> of this Documenters assignment.
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <p>You will be paid through our automated system when the agreed upon terms have been met, i.e.
+               if you are assigned to fill out a meeting template and live-tweet a meeting, your payment
+               will be processed when the template is turned in and the live-tweets confirmed.</p>
+
+            <div class="field">
+              <div class="control">
+                <div class="b-checkbox">
+                  <input type="checkbox" v-model="agreeToRate" id="agreeToRate" class="styled">
+                  <label for="agreeToRate">
+                    I agree to City Bureau's $15/hour pay rate for Documenters assignments.
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="submissionAttempted" class="validation">
+              <p v-for="m in validationMessages()" :key="m">{{m}}</p>
+            </div>
+
+            <button class="button is-dark is-medium submit" v-on:click.prevent="submit" :disabled="submitting">
+              {{ submitting ? "Please wait..." : "Request Assignments" }}
+            </button>
           </div>
         </div>
-
-        <div v-if="submissionAttempted" class="validation">
-          <p v-for="m in validationMessages()" :key="m">{{m}}</p>
-        </div>
-
-        <button class="button is-warning is-medium submit" v-on:click.prevent="submit" :disabled="submitting">
-          {{ submitting ? "Please wait..." : "Request Assignments" }}
-        </button>
-      </div>
       </form>
 
     </div>
@@ -131,10 +170,11 @@ button.submit {
 import parse from 'date-fns/parse';
 import format from 'date-fns/format';
 import EventListing from './EventListing.vue';
+import FloatingFooter from './FloatingFooter.vue';
 
 export default {
   name: 'assignment-form',
-  components: { EventListing },
+  components: { EventListing, FloatingFooter },
 
   data () {
     return {
@@ -182,7 +222,7 @@ export default {
       }
       let unselectedAssignmentTypes = this.selectedAssignments().some( a => a.selectedAssignmentType === "none" );
       if (unselectedAssignmentTypes) {
-        errors.push("Please select an assignment type for each selected meeting.");
+        errors.push("Please choose an assignment type from the menu for each selected meeting.");
       }
       if (this.name.trim().length === 0) {
         errors.push("Please enter your name.");

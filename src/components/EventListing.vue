@@ -31,13 +31,6 @@
     margin-bottom: 0;
   }
 
-  &:hover {
-    cursor: pointer;
-    .title {
-      color: darken( red, 20%);
-    }
-  }
-
   &.selected {
     color: $black;
     .title {
@@ -45,11 +38,25 @@
     }
   }
 
+  p.assignment-type-tags, p.assignment-type-select {
+    height: 2em;
+  }
+
+  select.assignment-type {
+    border: solid 2px #333;
+    &.is-invalid {
+      border-color: $yellow;
+    }
+  }
 }
 
 .event .b-checkbox {
   line-height: 1.8;
   overflow: hidden;
+
+  &:hover {
+    cursor: pointer;
+  }
 
   label .hidden {
     display: none;
@@ -76,11 +83,11 @@
 </style>
 
 <template>
-  <div class="event" v-if="event" v-bind:class="{ selected: event.selected }" @click="toggleSelection(event)">
-    <div class="b-checkbox">
+  <div class="event" v-if="event" v-bind:class="{ selected: event.selected }">
+    <div class="b-checkbox" @click="toggleSelection(event)">
       <div class="checkbox-container">
         <input type="checkbox" v-model="event.selected" :id="event.id" class="styled" @click.prevent.stop >
-        <label :for="event.id" @click.prevent ><span class="hidden">{{ event.fields.name }}, {{ event.fields.agency_name }}</span></label>
+        <label :for="event.id" ><span class="hidden">{{ event.fields.name }}, {{ event.fields.agency_name }}</span></label>
       </div>
       <p class="title is-4">{{ event.fields.agency_name }}</p>
       <p class="subtitle is-6">
@@ -92,8 +99,12 @@
       <div class="column is-half">
         <div class="meta">
           <p v-if="event.selected" class="assignment-type-select">
-            <select v-if="event.selected" v-model="event.selectedAssignmentType" @click.stop>
-              <option value="none">Please select an assignment type...</option>
+          <select
+              class="assignment-type" :class="{'is-invalid': event.selectedAssignmentType === 'none'}"
+              v-if="event.selected" v-model="event.selectedAssignmentType"
+              @click.stop
+            >
+            <option value="none" disabled>Choose an assignment type...</option>
               <option v-for="t in event.fields.assignment" :value="t">{{ t }}</option>
             </select>
           </p>
@@ -104,7 +115,10 @@
             {{ format(event.fields.date, "dddd, MMMM D, YYYY")}}<br>
             {{ format(event.fields.date, "h:mma") }}
           </p>
-          <p class="description">{{ event.fields["description"] }}</p>
+          <p class="description">
+          <span class="tag is-white">Description</span>
+            {{ event.fields["description"] || "-"}}
+          </p>
           <p class="community-area">
             <span class="tag is-white">Community Area</span>
             {{ event.fields["community_area"] || "-"}}
