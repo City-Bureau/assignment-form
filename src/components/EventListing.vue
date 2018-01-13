@@ -44,6 +44,7 @@
 
   select.assignment-type {
     border: solid 2px #333;
+    font-size: .9em;
     &.is-invalid {
       border-color: $yellow;
     }

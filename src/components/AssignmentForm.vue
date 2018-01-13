@@ -38,8 +38,10 @@
   line-height: 1.8;
 
   label {
-    padding-left: 15px;
+    padding-left: 2em;
     font-weight: bold;
+    display: block;
+    line-height: 1.4em;
   }
   label::before {
     height: 24px;
@@ -52,6 +54,10 @@
     top: 4px;
     font-size: 17px;
     line-height: 1;
+  }
+
+  input[type="checkbox"] {
+    position: absolute;
   }
 }
 
@@ -124,9 +130,20 @@ button.submit {
             <div class="field">
               <div class="control">
                 <div class="b-checkbox">
-                  <input type="checkbox" v-model="agreeToTerms" id="agreeToTerms" class="styled">
-                  <label for="agreeToTerms">
-                    I agree to the <a href="" _target="blank">terms and conditions</a> of this Documenters assignment.
+                  <input type="checkbox" v-model="agreeToAttend" id="agreeToAttend" class="styled">
+                  <label for="agreeToAttend">
+                    I agree to attend my assigned meeting at the given day and time, and stay for its duration
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <div class="b-checkbox">
+                  <input type="checkbox" v-model="agreeToFollowInstructions" id="agreeToFollowInstructions" class="styled">
+                  <label for="agreeToFollowInstructions">
+                    I agree to read all emailed instructions and submit my documentation to City Bureau within 24 hours of the end of my assigned meeting.
                   </label>
                 </div>
               </div>
@@ -142,6 +159,17 @@ button.submit {
                   <input type="checkbox" v-model="agreeToRate" id="agreeToRate" class="styled">
                   <label for="agreeToRate">
                     I agree to City Bureau's $15/hour pay rate for Documenters assignments.
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <div class="b-checkbox">
+                  <input type="checkbox" v-model="agreeToPayTaxes" id="agreeToPayTaxes" class="styled">
+                  <label for="agreeToPayTaxes">
+                    I understand that Documenters are independent contractors and that I am responsible for all taxes associated with this income.
                   </label>
                 </div>
               </div>
@@ -183,8 +211,10 @@ export default {
       error: null,
       submissionAttempted: false,
       events: [],
-      agreeToTerms: false,
+      agreeToAttend: false,
       agreeToRate: false,
+      agreeToFollowInstructions: false,
+      agreeToPayTaxes: false,
       name: "",
       email: "",
     }
@@ -234,11 +264,9 @@ export default {
       if (emailLength > 0 && !/.+@.+\..+/.test(this.email)) {
         errors.push("Please enter a valid email.");
       }
-      if (!this.agreeToTerms) {
-        errors.push("Please agree to terms and conditions.");
-      }
-      if (!this.agreeToRate) {
-        errors.push("Please agree to the rate.");
+      if (!this.agreeToAttend || !this.agreeToFollowInstructions ||
+          !this.agreeToRate || !this.agreeToPayTaxes) {
+        errors.push("Please agree to all terms and conditions.");
       }
       return errors;
     },
@@ -281,8 +309,10 @@ export default {
       this.submitting = true;
 
       const params = {
-        agree_to_terms: this.agreeToTerms,
+        agree_to_attend: this.agreeToAttend,
+        agree_to_follow_instructions: this.agreeToFollowInstructions,
         agree_to_rate: this.agreeToRate,
+        agree_to_pay_taxes: this.agreeToPayTaxes,
         applied_name: this.name,
         email: this.email,
         event: this.selectedAssignments().map( (event) => {
