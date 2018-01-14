@@ -50,7 +50,7 @@ export default {
       }
     }
 
-    const onScroll = () => {
+    this.onScroll = () => {
       if(!window.requestAnimationFrame){
         return setTimeout(check, 16);
       }
@@ -58,11 +58,11 @@ export default {
       window.requestAnimationFrame(check);
     }
 
-    window.addEventListener('scroll', onScroll);
+    window.addEventListener('scroll', this.onScroll);
   },
 
   destroyed () {
-    // window.removeEventListener('scroll', onScroll);
+    window.removeEventListener('scroll', this.onScroll);
   }
 }
 </script>
