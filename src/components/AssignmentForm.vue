@@ -272,7 +272,7 @@ export default {
     },
 
     domain() {
-      const domain = process.env.NODE_ENV === 'production' ? 'https://documenter-assignments-api.labs.citybureau.org' : 'http://localhost:5000';
+      const domain = process.env.NODE_ENV === 'production' ? 'https://documenter-assignments-api.labs.citybureau.org' : '';
       return domain;
     },
 
