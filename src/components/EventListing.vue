@@ -15,6 +15,10 @@
   }
 }
 
+.description {
+  white-space: pre-line;
+}
+
 .event {
   margin: 2em 0 3em;
   color: rgba($black, .6);
