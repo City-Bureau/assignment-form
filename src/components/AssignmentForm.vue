@@ -87,6 +87,9 @@ button.submit {
   border-bottom: none;
 }
 
+.no-events {
+}
+
 </style>
 
 <template>
@@ -95,92 +98,99 @@ button.submit {
       Loading...
     </div>
     <div v-else>
+
+      <div v-if="events.length === 0" class="no-events">
+        <p>There are no available assignments at this time.</p>
+      </div>
+
+      <div v-else>
+
       <p>Please use this form to claim assignments you want to document. Selected Documenters will be notified via email with instructions on how to complete the assignment and receive payment.</p>
+        <event-listing v-for="e in events" :key="e.id" :event="e">
+        </event-listing>
 
-      <event-listing v-for="e in events" :key="e.id" :event="e">
-      </event-listing>
+        <form>
+          <div class="summary">
+            <floating-footer :floating="selectedAssignments().length > 0">
+              <p class="box-header is-5">
+                {{ selectedAssignmentsMessage() }}
+                <span class="instructions">
+                  Please scroll down to complete your submission.
+                </span>
+              </p>
+            </floating-footer>
 
-      <form>
-        <div class="summary">
-          <floating-footer :floating="selectedAssignments().length > 0">
-            <p class="box-header is-5">
-              {{ selectedAssignmentsMessage() }}
-              <span class="instructions">
-                Please scroll down to complete your submission.
-              </span>
-            </p>
-          </floating-footer>
+            <div class="summary-content">
 
-          <div class="summary-content">
-
-            <div class="field">
-              <label class="label">Name</label>
-              <div class="control">
-                <input class="input" type="text" v-model="name" placeholder="Firstname Lastname">
-              </div>
-            </div>
-
-            <div class="field">
-              <label class="label">Email</label>
-              <div class="control">
-                <input class="input" type="text" v-model="email" placeholder="you@email.com">
-              </div>
-            </div>
-
-            <div class="field">
-              <div class="control">
-                <div class="b-checkbox">
-                  <input type="checkbox" v-model="agreeToAttend" id="agreeToAttend" class="styled">
-                  <label for="agreeToAttend">
-                    I agree to fulfill the terms of my assignment, including any in-person attendance requirements and stated deadlines.
-                  </label>
+              <div class="field">
+                <label class="label">Name</label>
+                <div class="control">
+                  <input class="input" type="text" v-model="name" placeholder="Firstname Lastname">
                 </div>
               </div>
-            </div>
 
-            <div class="field">
-              <div class="control">
-                <div class="b-checkbox">
-                  <input type="checkbox" v-model="agreeToFollowInstructions" id="agreeToFollowInstructions" class="styled">
-                  <label for="agreeToFollowInstructions">
-                    I agree to read all emailed instructions and submit documentation to City Bureau before payment for my work is approved.
-                  </label>
+              <div class="field">
+                <label class="label">Email</label>
+                <div class="control">
+                  <input class="input" type="text" v-model="email" placeholder="you@email.com">
                 </div>
               </div>
-            </div>
 
-            <div class="field">
-              <div class="control">
-                <div class="b-checkbox">
-                  <input type="checkbox" v-model="agreeToRate" id="agreeToRate" class="styled">
-                  <label for="agreeToRate">
-                    I agree to City Bureau's $15/hour pay rate for Documenters assignments.
-                  </label>
+              <div class="field">
+                <div class="control">
+                  <div class="b-checkbox">
+                    <input type="checkbox" v-model="agreeToAttend" id="agreeToAttend" class="styled">
+                    <label for="agreeToAttend">
+                      I agree to fulfill the terms of my assignment, including any in-person attendance requirements and stated deadlines.
+                    </label>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="field">
-              <div class="control">
-                <div class="b-checkbox">
-                  <input type="checkbox" v-model="agreeToPayTaxes" id="agreeToPayTaxes" class="styled">
-                  <label for="agreeToPayTaxes">
-                    I understand that Documenters are independent contractors and that I am responsible for all taxes associated with this income.
-                  </label>
+              <div class="field">
+                <div class="control">
+                  <div class="b-checkbox">
+                    <input type="checkbox" v-model="agreeToFollowInstructions" id="agreeToFollowInstructions" class="styled">
+                    <label for="agreeToFollowInstructions">
+                      I agree to read all emailed instructions and submit documentation to City Bureau before payment for my work is approved.
+                    </label>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div v-if="submissionAttempted" class="validation">
-              <p v-for="m in validationMessages()" :key="m">{{m}}</p>
-            </div>
+              <div class="field">
+                <div class="control">
+                  <div class="b-checkbox">
+                    <input type="checkbox" v-model="agreeToRate" id="agreeToRate" class="styled">
+                    <label for="agreeToRate">
+                      I agree to City Bureau's $15/hour pay rate for Documenters assignments.
+                    </label>
+                  </div>
+                </div>
+              </div>
 
-            <button class="button is-dark is-medium submit" v-on:click.prevent="submit" :disabled="submitting">
-              {{ submitting ? "Please wait..." : "Request Assignments" }}
-            </button>
+              <div class="field">
+                <div class="control">
+                  <div class="b-checkbox">
+                    <input type="checkbox" v-model="agreeToPayTaxes" id="agreeToPayTaxes" class="styled">
+                    <label for="agreeToPayTaxes">
+                      I understand that Documenters are independent contractors and that I am responsible for all taxes associated with this income.
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="submissionAttempted" class="validation">
+                <p v-for="m in validationMessages()" :key="m">{{m}}</p>
+              </div>
+
+              <button class="button is-dark is-medium submit" v-on:click.prevent="submit" :disabled="submitting">
+                {{ submitting ? "Please wait..." : "Request Assignments" }}
+              </button>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
 
     </div>
 
