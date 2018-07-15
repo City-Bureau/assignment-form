@@ -132,7 +132,7 @@ button.submit {
                 <div class="b-checkbox">
                   <input type="checkbox" v-model="agreeToAttend" id="agreeToAttend" class="styled">
                   <label for="agreeToAttend">
-                    I agree to attend my assigned meeting at the given day and time, and stay for its duration
+                    I agree to fulfill the terms of my assignment, including any in-person attendance requirements and stated deadlines.
                   </label>
                 </div>
               </div>
@@ -143,15 +143,11 @@ button.submit {
                 <div class="b-checkbox">
                   <input type="checkbox" v-model="agreeToFollowInstructions" id="agreeToFollowInstructions" class="styled">
                   <label for="agreeToFollowInstructions">
-                    I agree to read all emailed instructions and submit my documentation to City Bureau within 24 hours of the end of my assigned meeting.
+                    I agree to read all emailed instructions and submit documentation to City Bureau before payment for my work is approved.
                   </label>
                 </div>
               </div>
             </div>
-
-            <p>You will be paid through our automated system when the agreed upon terms have been met, i.e.
-               if you are assigned to fill out a meeting template and live-tweet a meeting, your payment
-               will be processed when the template is turned in and the live-tweets confirmed.</p>
 
             <div class="field">
               <div class="control">

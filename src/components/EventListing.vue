@@ -7,7 +7,7 @@
   margin-bottom: .5rem;
 }
 
-.description, .location, .community-area {
+.description, .location, .community-area, .url, .start-time, .end-time {
   font-size: .9em;
   .tag {
     padding-left: 0;
@@ -15,8 +15,17 @@
   }
 }
 
+.start-time, .end-time {
+  width: 40%;
+  vertical-align: top;
+}
+.start-time, .end-time {
+  display: inline-block;
+}
+
 .description {
   white-space: pre-line;
+  max-width: 600px;
 }
 
 .event {
@@ -31,7 +40,7 @@
     margin-left: 55px;
   }
 
-  p.community-area {
+  p.community-area, p.location {
     margin-bottom: 0;
   }
 
@@ -101,7 +110,7 @@
     </div>
 
     <div class="columns">
-      <div class="column is-half">
+      <div class="column">
         <div class="meta">
           <p v-if="event.selected" class="assignment-type-select">
           <select
@@ -116,9 +125,18 @@
           <p v-else class="assignment-type tags">
             <span v-for="t in event.fields.assignment" :key="t" class="tag is-rounded is-light">{{ t }}</span>
           </p>
-          <p class="date">
-            {{ format(event.fields.date, "dddd, MMMM D, YYYY")}}<br>
-            {{ format(event.fields.date, "h:mma") }}
+          <p class="start-time">
+          <span class="tag is-white">Start Time</span><br>
+            {{ format(event.fields.start_time, "dddd, MMMM D, YYYY")}}<br>
+            {{ format(event.fields.start_time, "h:mma") }}
+          </p>
+          <p class="end-time">
+          <span class="tag is-white">End Time</span><br>
+            <span v-if="event.fields.end_time">
+              {{ format(event.fields.end_time, "dddd, MMMM D, YYYY")}}<br>
+              {{ format(event.fields.end_time, "h:mma") }}
+            </span>
+            <span v-else>-</span>
           </p>
           <p class="description">
           <span class="tag is-white">Description</span>
@@ -131,6 +149,11 @@
           <p class="location">
             <span class="tag is-white">Location</span>
             <a v-if="event.fields['location_address']" v-on:click.stop :href="mapURL(event.fields['location_address'])" target="_blank">{{ event.fields["location_address"] }}</a>
+            <span v-else>-</span>
+          </p>
+          <p class="url">
+            <span class="tag is-white">URL</span>
+            <a v-if="event.fields['url']" v-on:click.stop :href="event.fields['url']" target="_blank">{{ event.fields["url"] }}</a>
             <span v-else>-</span>
           </p>
         </div>
