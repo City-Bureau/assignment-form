@@ -17,6 +17,7 @@
 
 .start-time, .end-time {
   width: 40%;
+  max-width: 300px;
   vertical-align: top;
 }
 .start-time, .end-time {
