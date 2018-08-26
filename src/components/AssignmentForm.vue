@@ -278,8 +278,7 @@ export default {
     },
 
     domain() {
-      const domain = process.env.NODE_ENV === 'production' ? 'https://documenter-assignments-api.labs.citybureau.org' : '';
-      return domain;
+      return process.env.API_HOST;
     },
 
     fetchData() {
@@ -291,7 +290,7 @@ export default {
         }
       };
 
-      fetch(`${this.domain()}/api/events`, options)
+      fetch(`//${this.domain()}/api/events`, options)
         .then((response) => response.json())
         .then((data) => {
           data.forEach( (d) => {
@@ -335,7 +334,7 @@ export default {
         }
       };
 
-      fetch(`${this.domain()}/api/applications`, options)
+      fetch(`//${this.domain()}/api/applications`, options)
         .then((response) => {
           if(response.ok) {
             return response.json();
