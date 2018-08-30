@@ -120,7 +120,7 @@
               @click.stop
             >
             <option value="none" disabled>Choose an assignment type...</option>
-              <option v-for="t in event.fields.assignment" :value="t">{{ t }}</option>
+              <option v-for="t in event.fields.assignment" :value="t" :key="t.id">{{ t }}</option>
             </select>
           </p>
           <p v-else class="assignment-type tags">
@@ -131,7 +131,7 @@
             {{ format(event.fields.start_time, "dddd, MMMM D, YYYY")}}<br>
             {{ format(event.fields.start_time, "h:mma") }}
           </p>
-          <p class="end-time">
+          <p class="end-time" v-if="event.fields.end_time">
           <span class="tag is-white">End Time</span><br>
             <span v-if="event.fields.end_time">
               {{ format(event.fields.end_time, "dddd, MMMM D, YYYY")}}<br>
@@ -143,13 +143,13 @@
           <span class="tag is-white">Description</span>
             {{ event.fields["description"] || "-"}}
           </p>
-          <p class="community-area">
+          <p class="community-area" v-if="event.fields.community_area">
             <span class="tag is-white">Community Area</span>
-            {{ event.fields["community_area"] || "-"}}
+            {{ event.fields.community_area || "-"}}
           </p>
           <p class="location">
             <span class="tag is-white">Location</span>
-            <a v-if="event.fields['location_address']" v-on:click.stop :href="mapURL(event.fields['location_address'])" target="_blank">{{ event.fields["location_address"] }}</a>
+            <a v-if="event.fields.location_address" v-on:click.stop :href="mapURL(event.fields.location_address)" target="_blank">{{ event.fields.location_address }}</a>
             <span v-else>-</span>
           </p>
           <p class="url">
